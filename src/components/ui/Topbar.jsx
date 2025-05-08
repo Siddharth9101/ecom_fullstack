@@ -236,7 +236,10 @@ const Topbar = ({ isLoggedIn }) => {
                   <div>
                     <button
                       className="bg-black text-white py-1 px-3 rounded cursor-pointer hover:bg-black/85 w-full"
-                      onClick={() => setOpenAuthForm(true)}
+                      onClick={() => {
+                        setOpenSidebar(false);
+                        setOpenAuthForm(true);
+                      }}
                     >
                       Login
                     </button>
