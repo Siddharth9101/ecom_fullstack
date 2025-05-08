@@ -212,7 +212,10 @@ const Topbar = ({ isLoggedIn }) => {
                   {/* cart button */}
                   <div
                     className="flex justify-center gap-3 items-center cursor-pointer py-1 px-3 bg-black text-white rounded hover:bg-black/85"
-                    onClick={() => setOpenCartSidebar(true)}
+                    onClick={() => {
+                      setOpenSidebar(false);
+                      setOpenCartSidebar(true);
+                    }}
                   >
                     Your Cart
                     <div>
@@ -224,7 +227,10 @@ const Topbar = ({ isLoggedIn }) => {
                   <div>
                     <button
                       className="bg-black text-white py-1 px-3 rounded cursor-pointer hover:bg-black/85 w-full"
-                      onClick={logoutHandler}
+                      onClick={() => {
+                        setOpenSidebar(false);
+                        logoutHandler();
+                      }}
                     >
                       Logout
                     </button>
