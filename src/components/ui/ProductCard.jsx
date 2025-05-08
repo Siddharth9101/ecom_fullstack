@@ -25,7 +25,7 @@ const ProductCard = ({ item }) => {
               }
               dispatch(addToCart(item));
             }}
-            className="opacity-0 group-hover:opacity-100 w-full bg-white border border-black text-black hover:bg-black hover:text-white font-bold text-sm text-center py-2  uppercase transition-all duration-300 ease-in-out cursor-pointer"
+            className="md:opacity-0 md:group-hover:opacity-100 opacity-100 w-full bg-white border border-black text-black hover:bg-black hover:text-white font-bold text-sm text-center py-2  uppercase transition-all duration-300 ease-in-out cursor-pointer"
           >
             Quick Add
           </button>

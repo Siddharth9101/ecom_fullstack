@@ -179,7 +179,7 @@ const Topbar = ({ isLoggedIn }) => {
       {/* sidebar mobile */}
       <aside
         onClick={() => setOpenSidebar(false)}
-        className={`h-full bg-black/60 absolute top-0 right-0 z-10 overflow-hidden transition-all duration-300 ${
+        className={`h-full bg-black/60 fixed top-0 right-0 z-[100] overflow-hidden transition-all duration-300 ${
           openSidebar
             ? "opacity-100 pointer-events-auto"
             : "opacity-0 pointer-events-none"
@@ -188,7 +188,10 @@ const Topbar = ({ isLoggedIn }) => {
           width: openSidebar ? "100%" : "0",
         }}
       >
-        <div className="fixed top-0 right-0 h-full w-[75%] bg-white px-2 pt-12 ">
+        <div
+          className="fixed top-0 right-0 h-full w-[75%] bg-white px-2 pt-12"
+          onClick={(e) => e.stopPropagation()}
+        >
           {/* close button */}
           <div className="flex justify-between items-center mb-6 ml-6">
             <span className="text-4xl font-semibold">ecom</span>

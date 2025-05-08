@@ -69,37 +69,60 @@ const CategoryCard = ({ item }) => {
   }, [isHovered]);
 
   return (
-    <div
-      className="overflow-hidden cursor-pointer relative group"
-      onMouseEnter={() => setIsHovered(true)}
-      onMouseLeave={() => setIsHovered(false)}
-      onClick={() => navigate(href)}
-    >
-      <img
-        ref={imageRef}
-        src={item.image}
-        alt="category 1"
-        className="transition-all duration-300 ease-in-out w-full h-46 object-cover object-top"
-        loading="lazy"
-      />
+    <>
+      {/* desktop view */}
       <div
-        ref={overlayRef}
-        className="absolute inset-0 bg-black opacity-0 pointer-events-none"
-      />
-      <div className="absolute inset-0 flex justify-center items-center text-black/90">
-        <h4 className="text-white text-3xl font-bold flex space-x-1">
-          {item.heading.split("").map((letter, idx) => (
-            <span
-              key={idx}
-              ref={(e) => (lettersRef.current[idx] = e)}
-              style={{ opacity: 0, display: "inline-block" }}
-            >
-              {letter}
-            </span>
-          ))}
-        </h4>
+        className="overflow-hidden cursor-pointer relative group md:block hidden"
+        onMouseEnter={() => setIsHovered(true)}
+        onMouseLeave={() => setIsHovered(false)}
+        onClick={() => navigate(href)}
+      >
+        <img
+          ref={imageRef}
+          src={item.image}
+          alt="category 1"
+          className="transition-all duration-300 ease-in-out w-full h-46 object-cover object-top"
+          loading="lazy"
+        />
+        <div
+          ref={overlayRef}
+          className="absolute inset-0 bg-black opacity-0 pointer-events-none"
+        />
+        <div className="absolute inset-0 flex justify-center items-center text-black/90">
+          <h4 className="text-white text-3xl font-bold flex space-x-1">
+            {item.heading.split("").map((letter, idx) => (
+              <span
+                key={idx}
+                ref={(e) => (lettersRef.current[idx] = e)}
+                style={{ opacity: 0, display: "inline-block" }}
+              >
+                {letter}
+              </span>
+            ))}
+          </h4>
+        </div>
       </div>
-    </div>
+
+      {/* mobile view */}
+      <div
+        className="overflow-hidden cursor-pointer md:hidden block relative h-46"
+        onClick={() => navigate(href)}
+      >
+        <img
+          ref={imageRef}
+          src={item.image}
+          alt="category 1"
+          className="size-full object-cover object-top"
+          loading="lazy"
+        />
+        <div className="absolute inset-0 bg-black/30 pointer-events-none" />
+        <div className="absolute inset-0 flex justify-center items-center text-black/90">
+          <h4 className="text-white text-3xl font-bold flex space-x-1">
+            {item.heading}
+          </h4>
+        </div>
+      </div>
+    </>
   );
 };
 
