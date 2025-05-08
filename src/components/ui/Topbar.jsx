@@ -5,8 +5,14 @@ import { IoMdClose } from "react-icons/io";
 import { Link } from "react-router-dom";
 import AuthForm from "../AuthForm";
 import { useDispatch, useSelector } from "react-redux";
-import { setLogOut } from "../../store/authSlice";
+import { logoutUser } from "../../store/authSlice";
+import { emptyCart } from "../../store/cartSlice";
 import CartItem from "./CartItem";
+import toast from "react-hot-toast";
+import { useDebounce } from "react-haiku";
+import { fetchProducts, searchProducts } from "../../store/productsSlice";
+import { useRazorpay } from "react-razorpay";
+import axios from "axios";
 
 const Topbar = ({ isLoggedIn }) => {
   const [openSidebar, setOpenSidebar] = useState(false);
@@ -14,13 +20,97 @@ const Topbar = ({ isLoggedIn }) => {
   const [openCartSidebar, setOpenCartSidebar] = useState(false);
   const dispatch = useDispatch();
   const cartItems = useSelector((state) => state.cart.cartItems);
+  const [searchTerm, setSearchTerm] = useState("");
+  const debouncedValue = useDebounce(searchTerm, 1000);
+
+  const { error, isLoading, Razorpay } = useRazorpay();
+
+  const handlePayment = ({ amount, orderId, Items }) => {
+    const itemNames = Items.join(", ");
+    const options = {
+      key: import.meta.env.VITE_RAZORPAY_ID,
+      amount: amount * 100,
+      currency: "INR",
+      name: "ekat store",
+      description: `Payment for ${itemNames}`,
+      order_id: orderId,
+      handler: (response) => {
+        console.log(response);
+        toast.success("Payment Successful!");
+      },
+      prefill: {
+        name: "Siddharth",
+        email: "siddharth@example.com",
+        contact: "9999999999",
+      },
+      notes: {
+        address: "Shipping to: XYZ Street, Delhi",
+        items: itemNames,
+      },
+      theme: {
+        color: "#3399cc",
+      },
+    };
+
+    const razorpayInstance = new Razorpay(options);
+    razorpayInstance.open();
+  };
+
+  const checkout = async (amount, cartItems) => {
+    try {
+      let Items = [];
+      cartItems.map((item) => Items.push(item.title));
+      const result = await axios.post(
+        `${import.meta.env.VITE_BACKEND_BASE_URL}/create-order`,
+        {
+          amount,
+        }
+      );
+      const { data } = result;
+      handlePayment({ amount, orderId: data.id, Items });
+      if (!isLoading) dispatch(emptyCart());
+    } catch (error) {
+      console.log(error);
+      toast.error("Payment Failed!");
+    }
+  };
 
   useEffect(() => {
-    document.body.style.overflow =
-      openAuthForm || openSidebar ? "hidden" : "auto";
-  }, [, openSidebar, openAuthForm]);
+    if (openSidebar || openAuthForm || openCartSidebar) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "auto";
+    }
+
+    return () => {
+      document.body.style.overflow = "auto";
+    };
+  }, [openSidebar, openAuthForm, openCartSidebar]);
+
+  useEffect(() => {
+    if (debouncedValue === "") {
+      dispatch(fetchProducts());
+    }
+    dispatch(searchProducts(debouncedValue));
+  }, [debouncedValue]);
+
+  const logoutHandler = async () => {
+    dispatch(logoutUser());
+    dispatch(emptyCart());
+    setOpenSidebar(false);
+    toast.success("Logout successful");
+  };
+  if (error)
+    return (
+      <div className="h-screen flex justify-center items-center text-2xl">
+        Error in payment
+        <Link to="/" className="underline">
+          Go back
+        </Link>
+      </div>
+    );
   return (
-    <div className="flex items-center justify-between py-2 px-8">
+    <div className="flex items-center justify-between py-2 px-8 bg-white">
       {/* logo/brand */}
       <div>
         <span className="text-4xl font-bold">ecom</span>
@@ -34,6 +124,7 @@ const Topbar = ({ isLoggedIn }) => {
             type="text"
             placeholder="Search..."
             className="shadow border border-gray-200 bg-gray-100 rounded py-1 px-2 outline-none"
+            onChange={(e) => setSearchTerm(e.target.value)}
           />
         </div>
         {isLoggedIn ? (
@@ -56,7 +147,7 @@ const Topbar = ({ isLoggedIn }) => {
             <div>
               <button
                 className="bg-black text-white py-1 px-3 rounded cursor-pointer hover:bg-black/85"
-                onClick={() => dispatch(setLogOut())}
+                onClick={logoutHandler}
               >
                 Logout
               </button>
@@ -97,7 +188,7 @@ const Topbar = ({ isLoggedIn }) => {
           width: openSidebar ? "100%" : "0",
         }}
       >
-        <div className="absolute top-0 right-0 h-full w-[75%] bg-white px-2 pt-12 ">
+        <div className="fixed top-0 right-0 h-full w-[75%] bg-white px-2 pt-12 ">
           {/* close button */}
           <div className="flex justify-between items-center mb-6 ml-6">
             <span className="text-4xl font-semibold">ecom</span>
@@ -130,7 +221,7 @@ const Topbar = ({ isLoggedIn }) => {
                   <div>
                     <button
                       className="bg-black text-white py-1 px-3 rounded cursor-pointer hover:bg-black/85 w-full"
-                      onClick={() => dispatch(setLogOut())}
+                      onClick={logoutHandler}
                     >
                       Logout
                     </button>
@@ -160,10 +251,10 @@ const Topbar = ({ isLoggedIn }) => {
               <Link to="/products">Products</Link>
             </li>
             <li>
-              <Link to="/categories">Category</Link>
+              <Link to="/new-arrivals">New Arrivals</Link>
             </li>
             <li>
-              <Link to="/categories">Trends</Link>
+              <Link to="/trending">Trends</Link>
             </li>
           </ul>
         </div>
@@ -171,28 +262,34 @@ const Topbar = ({ isLoggedIn }) => {
 
       {/* Login & Signup form */}
       <div
-        className={`absolute top-0 right-0 h-full bg-black/60 z-50 flex justify-end transition-all duration-300 ease-in-out overflow-hidden ${
+        className={`fixed top-0 right-0 h-full bg-black/60 z-50 flex justify-end transition-all duration-300 ease-in-out overflow-hidden ${
           openAuthForm
             ? "w-full opacity-100 pointer-events-auto"
             : "w-0 opacity-0 pointer-events-none"
         }`}
         onClick={() => setOpenAuthForm(false)}
       >
-        <div className="w-[85%] md:w-[28%] h-full bg-white pt-8 px-8">
+        <div
+          className="w-[85%] md:w-[28%] h-full bg-white pt-8 px-8"
+          onClick={(e) => e.stopPropagation()}
+        >
           <AuthForm setOpenAuthForm={setOpenAuthForm} />
         </div>
       </div>
 
       {/* Cart Sidebar */}
       <div
-        className={`absolute top-0 right-0 h-full flex justify-end transition-all duration-300 ease-in-out overflow-hidden bg-black/60 z-50 ${
+        className={`fixed top-0 right-0 h-full flex justify-end transition-all duration-300 ease-in-out overflow-hidden bg-black/60 z-50 ${
           openCartSidebar
             ? "w-full opacity-100 pointer-events-auto"
             : "w-0 opacity-0 pointer-events-none"
         }`}
         onClick={() => setOpenCartSidebar(false)}
       >
-        <div className="md:w-[35%] w-[85%] h-full bg-white pt-14 px-10">
+        <div
+          className="md:w-[35%] w-[85%] h-full bg-white pt-14 px-10 overflow-scroll"
+          onClick={(e) => e.stopPropagation()}
+        >
           {/* top portion */}
           <div className="flex justify-between mb-6">
             <span className="font-semibold">Cart</span>
@@ -223,10 +320,20 @@ const Topbar = ({ isLoggedIn }) => {
             <div className="py-2 px-4 flex justify-between items-center">
               <span className="font-semibold">Total</span>
               <span>
-                ${cartItems.reduce((sum, item) => sum + Number(item.price), 0)}
+                ₹{cartItems.reduce((sum, item) => sum + Number(item.price), 0)}
               </span>
             </div>
-            <button className="w-full bg-black hover:bg-white text-white hover:text-black border border-black transition-all duration-500 ease-in-out py-2 cursor-pointer tracking-wide font-semibold ">
+            <button
+              className="w-full bg-black hover:bg-white text-white hover:text-black border border-black transition-all duration-500 ease-in-out py-2 cursor-pointer tracking-wide font-semibold "
+              disabled={isLoading}
+              onClick={() => {
+                checkout(
+                  cartItems.reduce((sum, item) => sum + Number(item.price), 0),
+                  cartItems
+                );
+                setOpenCartSidebar(false);
+              }}
+            >
               Proceed to Checkout
             </button>
           </div>

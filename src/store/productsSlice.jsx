@@ -3,6 +3,7 @@ import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 const initialState = {
   loadingProducts: false,
   products: [],
+  allProducts: [],
   error: null,
 };
 
@@ -14,102 +15,62 @@ export const fetchProducts = createAsyncThunk(
         resolve([
           {
             id: 1,
-            image: "/new-arrivals-1.webp",
-            title: "Sample - Clothing And Accessory Boutiques For Sale",
-            price: "48.99",
+            title: "Women Peach-Coloured Floral Kurta",
+            image: "/1.jpg",
+            price: 2999,
+            category: "women's wear",
           },
           {
             id: 2,
-            image: "/new-arrivals-2.webp",
-            title: "Sample - Clothing And Accessory Boutiques For Sale",
-            price: "48.99",
+            title: "Bell Sleeves Thread Work Pure Cotton A-Line Kurta",
+            image: "/2.jpg",
+            price: 1574,
+            category: "women's wear",
           },
           {
             id: 3,
-            image: "/new-arrivals-3.webp",
-            title: "Sample - Clothing And Accessory Boutiques For Sale",
-            price: "48.99",
+            title: "Anarkali Pure Cotton Kurta ",
+            image: "/3.jpg",
+            price: 1199,
+            category: "women's wear",
           },
           {
             id: 4,
-            image: "/new-arrivals-4.webp",
-            title: "Sample - Clothing And Accessory Boutiques For Sale",
-            price: "48.99",
+            title: "Printed Slim Fit Polo Collar Cotton T-shirt",
+            image: "/4.jpg",
+            price: 679,
+            category: "men's wear",
           },
           {
             id: 5,
-            image: "/new-arrivals-1.webp",
-            title: "Sample - Clothing And Accessory Boutiques For Sale",
-            price: "48.99",
+            title: "Men Typography Printed T-shirt",
+            image: "/5.jpg",
+            price: 434,
+            category: "men's wear",
           },
           {
             id: 6,
-            image: "/new-arrivals-2.webp",
-            title: "Sample - Clothing And Accessory Boutiques For Sale",
-            price: "48.99",
+            title: "Graphic Printed Oversized T-shirt",
+            image: "/6.jpg",
+            price: 485,
+            category: "men's wear",
           },
           {
             id: 7,
-            image: "/new-arrivals-3.webp",
-            title: "Sample - Clothing And Accessory Boutiques For Sale",
-            price: "48.99",
+            title: "Boys Printed T-Shirt and Joggers",
+            image: "/7.jpg",
+            price: 493,
+            category: "kid's wear",
           },
           {
             id: 8,
-            image: "/new-arrivals-4.webp",
-            title: "Sample - Clothing And Accessory Boutiques For Sale",
-            price: "48.99",
-          },
-          {
-            id: 9,
-            image: "/trending1.webp",
-            title: "Sample - Clothing And Accessory Boutiques For Sale",
-            price: "$48.99",
-          },
-          {
-            id: 10,
-            image: "/trending2.webp",
-            title: "Sample - Clothing And Accessory Boutiques For Sale",
-            price: "$48.99",
-          },
-          {
-            id: 11,
-            image: "/trending3.webp",
-            title: "Sample - Clothing And Accessory Boutiques For Sale",
-            price: "$48.99",
-          },
-          {
-            id: 12,
-            image: "/trending4.webp",
-            title: "Sample - Clothing And Accessory Boutiques For Sale",
-            price: "$48.99",
-          },
-          {
-            id: 13,
-            image: "/trending1.webp",
-            title: "Sample - Clothing And Accessory Boutiques For Sale",
-            price: "$48.99",
-          },
-          {
-            id: 14,
-            image: "/trending2.webp",
-            title: "Sample - Clothing And Accessory Boutiques For Sale",
-            price: "$48.99",
-          },
-          {
-            id: 15,
-            image: "/trending3.webp",
-            title: "Sample - Clothing And Accessory Boutiques For Sale",
-            price: "$48.99",
-          },
-          {
-            id: 16,
-            image: "/trending4.webp",
-            title: "Sample - Clothing And Accessory Boutiques For Sale",
-            price: "$48.99",
+            title: "Girls Printed Round Neck Pure Cotton Top",
+            image: "/8.jpg",
+            price: 879,
+            category: "kid's wear",
           },
         ]);
-      }, 3000);
+      }, 1000);
     });
   }
 );
@@ -117,23 +78,42 @@ export const fetchProducts = createAsyncThunk(
 const productSlice = createSlice({
   name: "products",
   initialState: initialState,
-  reducers: {},
+  reducers: {
+    searchProducts: (state, action) => {
+      state.products = state.allProducts.filter((product) =>
+        product.title.toLowerCase().includes(action.payload.toLowerCase())
+      );
+    },
+    filterByPrice: (state, action) => {
+      state.products = state.allProducts.filter(
+        (product) => product.price <= action.payload
+      );
+    },
+    filterByCat: (state, action) => {
+      state.products = state.allProducts.filter(
+        (product) =>
+          product.category.toLowerCase() === action.payload.toLowerCase()
+      );
+    },
+  },
   extraReducers: (builder) => {
     builder
       .addCase(fetchProducts.pending, (state) => {
         state.loadingProducts = true;
       })
       .addCase(fetchProducts.rejected, (state, action) => {
-        state.error = action.error.message;
+        state.error = action.payload || "Something went wrong.";
         state.loadingProducts = false;
       })
       .addCase(fetchProducts.fulfilled, (state, action) => {
         state.products = action.payload;
+        state.allProducts = action.payload;
         state.loadingProducts = false;
       });
   },
 });
 
-// export const
+export const { searchProducts, filterByPrice, filterByCat } =
+  productSlice.actions;
 
 export default productSlice.reducer;

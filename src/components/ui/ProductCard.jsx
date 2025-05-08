@@ -9,7 +9,12 @@ const ProductCard = ({ item }) => {
   return (
     <div>
       <div className="relative group">
-        <img src={item.image} alt={item.title} className="w-full" />
+        <img
+          src={item.image}
+          alt={item.title}
+          className="w-full"
+          loading="lazy"
+        />
         {/* overlay */}
         <div className="absolute top-0 left-0 inset-0 hover:bg-black/10 transition-all duration-300 ease-in-out cursor-pointer flex items-end justify-end">
           <button
@@ -30,7 +35,7 @@ const ProductCard = ({ item }) => {
         <h4 className="text-[13px] tracking-wider font-medium text-black/90 leading-6 w-[80%]">
           {item.title}
         </h4>
-        <span className="mt-2 font-bold">{item.price}</span>
+        <span className="mt-2 font-bold">₹{item.price}</span>
       </div>
     </div>
   );

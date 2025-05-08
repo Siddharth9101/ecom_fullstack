@@ -9,14 +9,20 @@ import Loading from "./ui/Loading";
 import Error from "./ui/Error";
 
 const Home = () => {
-  const { loadingProducts, error, products } = useSelector(
+  const { loadingProducts, error, allProducts } = useSelector(
     (state) => state.products
   );
   // fetching products
   const dispatch = useDispatch();
   useEffect(() => {
-    dispatch(fetchProducts());
+    if (allProducts.length === 0) {
+      dispatch(fetchProducts());
+    }
   }, [dispatch]);
+
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
 
   if (loadingProducts) {
     return <Loading />;
@@ -30,16 +36,19 @@ const Home = () => {
       {/* Banner 1 */}
       <Banner
         bannerImg={"/banner.webp"}
-        bannerTitle={"COSMOPOLIS"}
+        bannerTitle={"SUMMER SALE"}
         titleSide={"left"}
         bannerMobile={"/banner-mobile.webp"}
+        bannerText={
+          "Sizzle into savings! ☀️ Hot summer deals up to 50% off – only for a limited time!"
+        }
       />
       {/* Categories cards */}
       <section className="md:p-8 p-4 grid md:grid-cols-3 md:gap-8 gap-4">
         {[
-          { image: "/cat1.avif", heading: "Men's Wear" },
-          { image: "/cat2.avif", heading: "Women's Wear" },
-          { image: "/cat3.avif", heading: "Kid's Wear" },
+          { image: "/men-cat.jpg", heading: "Men's Wear", link: "/men" },
+          { image: "/women-cat.jpg", heading: "Women's Wear", link: "/women" },
+          { image: "/kids-cat.jpg", heading: "Kid's Wear", link: "/kids" },
         ].map((item, idx) => (
           <CategoryCard item={item} key={idx} />
         ))}
@@ -51,18 +60,25 @@ const Home = () => {
       {/* New Arrival Products */}
       {
         <section className="grid md:grid-cols-4 md:gap-8 md:p-8 gap-4 p-4">
-          {products.map((item, idx) => (
-            <ProductCard key={idx} item={item} />
-          ))}
+          {allProducts.length > 0 ? (
+            allProducts.map((item) => <ProductCard key={item.id} item={item} />)
+          ) : (
+            <div className="text-4xl h-56 w-full flex justify-center items-center col-span-4">
+              No Products Found
+            </div>
+          )}
         </section>
       }
 
       {/* Banner 2  */}
       <Banner
         bannerImg={"/banner-2.webp"}
-        bannerTitle={"Metropólis"}
+        bannerTitle={"Sun’s Out, Deals On!"}
         titleSide={"right"}
         bannerMobile={"/banner-2-mobile.webp"}
+        bannerText={
+          "Catch the hottest prices of the season – shop now before they melt away!"
+        }
       />
 
       {/* Treanding Now Section */}
@@ -73,9 +89,13 @@ const Home = () => {
       {/* Treanding Now Products */}
       {
         <section className="grid md:grid-cols-4 md:gap-8 md:p-8 gap-4 p-4">
-          {products.map((item, idx) => (
-            <ProductCard key={idx} item={item} />
-          ))}
+          {allProducts.length > 0 ? (
+            allProducts.map((item) => <ProductCard key={item.id} item={item} />)
+          ) : (
+            <div className="text-4xl h-56 w-full flex justify-center items-center col-span-4">
+              No products found
+            </div>
+          )}
         </section>
       }
     </>

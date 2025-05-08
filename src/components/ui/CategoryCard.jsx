@@ -1,5 +1,6 @@
 import gsap from "gsap";
 import { useEffect, useRef, useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 const CategoryCard = ({ item }) => {
   const [isHovered, setIsHovered] = useState(false);
@@ -9,10 +10,12 @@ const CategoryCard = ({ item }) => {
   const tl = useRef(null);
   const imgTl = useRef(null);
   const overlayTl = useRef(null);
+  const href = item.link;
 
   const resetLetters = () => {
     gsap.set(lettersRef.current, { opacity: 0, y: 20 });
   };
+  const navigate = useNavigate();
 
   useEffect(() => {
     resetLetters();
@@ -70,12 +73,14 @@ const CategoryCard = ({ item }) => {
       className="overflow-hidden cursor-pointer relative group"
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
+      onClick={() => navigate(href)}
     >
       <img
         ref={imageRef}
         src={item.image}
         alt="category 1"
-        className="hover:scale-110 transition-all duration-300 ease-in-out w-full"
+        className="transition-all duration-300 ease-in-out w-full h-46 object-cover object-top"
+        loading="lazy"
       />
       <div
         ref={overlayRef}

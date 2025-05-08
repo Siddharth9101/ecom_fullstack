@@ -5,12 +5,13 @@ const CartItem = ({ product }) => {
   const dispatch = useDispatch();
   return (
     <div className="flex flex-col gap-4">
-      <div className="grid grid-cols-10">
-        <div className="col-span-4">
+      <div className=" grid grid-cols-10 gap-1">
+        <div className="col-span-4 h-42">
           <img
             src={product.image}
             alt="product image"
-            className="size-28 object-cover"
+            className="size-full object-cover"
+            loading="lazy"
           />
         </div>
         <div className="col-span-6 flex flex-col justify-around items-start">

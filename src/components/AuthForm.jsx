@@ -1,11 +1,45 @@
 import React, { useState } from "react";
 import { IoMdClose } from "react-icons/io";
 import { useDispatch } from "react-redux";
-import { setLogIn } from "../store/authSlice";
+import { loginUser } from "../store/authSlice";
+import { useForm } from "react-hook-form";
+import { toast } from "react-hot-toast";
 
 const AuthForm = ({ setOpenAuthForm }) => {
-  const dispatch = useDispatch();
+  const {
+    handleSubmit,
+    reset,
+    register,
+    formState: { errors },
+  } = useForm();
   const [login, setLogin] = useState(true);
+
+  const dispatch = useDispatch();
+  const onSignupSubmit = async (data) => {
+    const { fullname, signupEmail, signupPassword } = data;
+
+    dispatch(
+      loginUser({
+        fullname,
+        email: signupEmail,
+        cartItems: [],
+      })
+    );
+
+    setOpenAuthForm(false);
+    reset();
+    toast.success("Signup successful");
+  };
+
+  const onLoginSubmit = async (data) => {
+    const { loginEmail, loginPassword } = data;
+
+    dispatch(loginUser({ email: loginEmail, cartItems: [] }));
+
+    setOpenAuthForm(false);
+    reset();
+    toast.success("Login successful");
+  };
   return (
     <div className="size-full">
       {login ? (
@@ -26,13 +60,54 @@ const AuthForm = ({ setOpenAuthForm }) => {
 
             <form
               className="mt-6 mb-4 flex flex-col gap-4"
-              onSubmit={(e) => {
-                e.preventDefault();
-                dispatch(setLogIn());
-              }}
+              onSubmit={handleSubmit(onLoginSubmit)}
             >
-              <InputBox label="Email Address" type="text" name="email" />
-              <InputBox label="Password" type="password" name="password" />
+              {/* login email */}
+              <div className="flex flex-col gap-3">
+                <label
+                  htmlFor="loginEmail"
+                  className="text-sm font-semibold tracking-wide"
+                >
+                  Email Address
+                  <sup className="text-red-500">*</sup>
+                </label>
+                <input
+                  type="email"
+                  id="loginEmail"
+                  name="loginEmail"
+                  placeholder="example@gmail.com"
+                  className="p-3 text-gray-800 text-sm border border-gray-600 tracking-wide outline-none"
+                  {...register("loginEmail", { required: true })}
+                />
+                {errors.loginEmail && (
+                  <span className="text-red-500 text-xs font-semibold tracking-wide">
+                    This field is required
+                  </span>
+                )}
+              </div>
+              {/* login password */}
+              <div className="flex flex-col gap-3">
+                <label
+                  htmlFor="loginPassword"
+                  className="text-sm font-semibold tracking-wide"
+                >
+                  Password
+                  <sup className="text-red-500">*</sup>
+                </label>
+                <input
+                  type="password"
+                  id="loginPassword"
+                  name="loginPassword"
+                  placeholder="********"
+                  className="p-3 text-gray-800 text-sm border border-gray-600 tracking-wide outline-none"
+                  {...register("loginPassword", { required: true })}
+                />
+                {errors.loginPassword && (
+                  <span className="text-red-500 text-xs font-semibold tracking-wide">
+                    This field is required
+                  </span>
+                )}
+              </div>
               <Button label="Login" type="submit" accent="black" />
             </form>
             <span className="block w-full text-sm font-semibold text-center mb-4">
@@ -62,10 +137,80 @@ const AuthForm = ({ setOpenAuthForm }) => {
               <IoMdClose className="size-6" />
             </div>
           </div>
-          <form className="mt-6 mb-4 flex flex-col gap-4">
-            <InputBox label="Full Name" type="text" name="fname" />
-            <InputBox label="Email Address" type="text" name="email" />
-            <InputBox label="Password" type="password" name="password" />
+          {/* signup form*/}
+          <form
+            className="mt-6 mb-4 flex flex-col gap-4"
+            onSubmit={handleSubmit(onSignupSubmit)}
+          >
+            {/* fullname */}
+            <div className="flex flex-col gap-3">
+              <label
+                htmlFor="signupEmail"
+                className="text-sm font-semibold tracking-wide"
+              >
+                Full Name
+                <sup className="text-red-500">*</sup>
+              </label>
+              <input
+                type="text"
+                id="fullname"
+                name="fullname"
+                placeholder="John Doe"
+                className="p-3 text-gray-800 text-sm border border-gray-600 tracking-wide outline-none"
+                {...register("fullname", { required: true })}
+              />
+              {errors.fullname && (
+                <span className="text-red-500 text-xs font-semibold tracking-wide">
+                  This field is required
+                </span>
+              )}
+            </div>
+            {/* signup email */}
+            <div className="flex flex-col gap-3">
+              <label
+                htmlFor="signupEmail"
+                className="text-sm font-semibold tracking-wide"
+              >
+                Email Address
+                <sup className="text-red-500">*</sup>
+              </label>
+              <input
+                type="email"
+                id="signupEmail"
+                name="signupEmail"
+                placeholder="example2gmail.com"
+                className="p-3 text-gray-800 text-sm border border-gray-600 tracking-wide outline-none"
+                {...register("signupEmail", { required: true })}
+              />
+              {errors.signupEmail && (
+                <span className="text-red-500 text-xs font-semibold tracking-wide">
+                  This field is required
+                </span>
+              )}
+            </div>
+            {/* signup password */}
+            <div className="flex flex-col gap-3">
+              <label
+                htmlFor="signupPassword"
+                className="text-sm font-semibold tracking-wide"
+              >
+                Password
+                <sup className="text-red-500">*</sup>
+              </label>
+              <input
+                type="password"
+                id="signupPassword"
+                name="signupPassword"
+                placeholder="********"
+                className="p-3 text-gray-800 text-sm border border-gray-600 tracking-wide outline-none"
+                {...register("signupPassword", { required: true })}
+              />
+              {errors.signupPassword && (
+                <span className="text-red-500 text-xs font-semibold tracking-wide">
+                  This field is required
+                </span>
+              )}
+            </div>
             <Button label="Register" type="submit" accent="black" />
           </form>
           <span className="block w-full text-sm font-semibold text-center mb-4">
@@ -88,24 +233,6 @@ const AuthForm = ({ setOpenAuthForm }) => {
 };
 
 export default AuthForm;
-
-const InputBox = ({ label, type, name }) => {
-  return (
-    <div className="flex flex-col gap-3">
-      <label htmlFor={name} className="text-sm font-semibold tracking-wide">
-        {label}
-        <sup className="text-red-500">*</sup>
-      </label>
-      <input
-        type={type}
-        id={name}
-        name={name}
-        placeholder="Email Address"
-        className="p-3 text-gray-800 text-sm border border-gray-600 tracking-wide outline-none"
-      />
-    </div>
-  );
-};
 
 const Button = ({ label, type, accent, handler }) => {
   return (

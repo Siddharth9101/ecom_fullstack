@@ -1,25 +1,44 @@
+import { lazy } from "react";
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
-import Header from "./components/Header";
-import Footer from "./components/Footer";
-import Home from "./components/Home";
-import OfferBar from "./components/ui/OfferBar";
-import Products from "./components/Products";
+const Home = lazy(() => import("./components/Home"));
+const Products = lazy(() => import("./components/Products"));
+const UserLayout = lazy(() => import("./components/layouts/UserLayout"));
 
 const App = () => {
   return (
     <main className="relative min-h-screen">
       <Router>
-        <OfferBar />
-        <Header />
         <section>
           <Routes>
-            <Route path="" element={<Home />} />
-            <Route path="products" element={<Products />} />
-            <Route path="new-arrivals" element={<Products />} />
-            <Route path="trending" element={<Products />} />
+            <Route path="/" element={<UserLayout />}>
+              <Route index element={<Home />} />
+              <Route
+                path="products"
+                element={<Products pageLabel={"All Products"} />}
+              />
+              <Route
+                path="new-arrivals"
+                element={<Products pageLabel={"New Arrivals"} />}
+              />
+              <Route
+                path="trending"
+                element={<Products pageLabel={"Trending"} />}
+              />
+              <Route
+                path="men"
+                element={<Products pageLabel={"Men's Wear"} />}
+              />
+              <Route
+                path="women"
+                element={<Products pageLabel={"Women's Wear"} />}
+              />
+              <Route
+                path="kids"
+                element={<Products pageLabel={"Kid's Wear"} />}
+              />
+            </Route>
           </Routes>
         </section>
-        <Footer />
       </Router>
     </main>
   );

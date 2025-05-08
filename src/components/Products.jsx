@@ -8,7 +8,7 @@ import { fetchProducts } from "../store/productsSlice";
 import Loading from "./ui/Loading";
 import Error from "./ui/Error";
 
-const Products = () => {
+const Products = ({ pageLabel }) => {
   const [open, setOpen] = useState(false);
   const dispatch = useDispatch();
   const { loadingProducts, products, error } = useSelector(
@@ -16,7 +16,13 @@ const Products = () => {
   );
 
   useEffect(() => {
-    dispatch(fetchProducts());
+    window.scrollTo(0, 0);
+  }, [pageLabel]);
+
+  useEffect(() => {
+    if (products.length === 0) {
+      dispatch(fetchProducts());
+    }
   }, [dispatch]);
 
   useEffect(() => {
@@ -46,16 +52,25 @@ const Products = () => {
           <span className="text-sm">Filters</span>
         </div>
         <div>
-          <img src={"/products-banner.webp"} alt="" />
+          <img src={"/products-banner.webp"} alt="banner" loading="lazy" />
         </div>
         <h1 className="text-4xl font-semibold italic tracking-wider my-6 px-6 md:px-0">
-          All Products
+          {pageLabel}
         </h1>
         {
           <div className="grid md:grid-cols-3 grid-cols-2 gap-6 px-4 md:px-0">
-            {products.map((item, idx) => (
-              <ProductCard key={idx} item={item} />
-            ))}
+            {pageLabel === "Men's Wear" ||
+            pageLabel === "Women's Wear" ||
+            pageLabel === "Kid's Wear"
+              ? products
+                  .filter(
+                    (item) =>
+                      item.category.toLowerCase() === pageLabel.toLowerCase()
+                  )
+                  .map((item) => <ProductCard key={item.id} item={item} />)
+              : products.map((item) => (
+                  <ProductCard key={item.id} item={item} />
+                ))}
           </div>
         }
       </div>
