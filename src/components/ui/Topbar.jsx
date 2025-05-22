@@ -95,10 +95,21 @@ const Topbar = ({ isLoggedIn }) => {
   }, [debouncedValue]);
 
   const logoutHandler = async () => {
-    dispatch(logoutUser());
-    dispatch(emptyCart());
-    setOpenSidebar(false);
-    toast.success("Logout successful");
+    try {
+      const result = await axios.get(
+        `${import.meta.env.VITE_BACKEND_BASE_URL}/logout`,
+        {
+          withCredentials: true,
+        }
+      );
+      dispatch(logoutUser());
+      dispatch(emptyCart());
+      setOpenSidebar(false);
+      toast.success("Logout successful");
+    } catch (error) {
+      console.log(error);
+      toast.error(error?.response?.data?.message);
+    }
   };
   if (error)
     return (

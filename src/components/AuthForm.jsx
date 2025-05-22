@@ -4,6 +4,7 @@ import { useDispatch } from "react-redux";
 import { loginUser } from "../store/authSlice";
 import { useForm } from "react-hook-form";
 import { toast } from "react-hot-toast";
+import axios from "axios";
 
 const AuthForm = ({ setOpenAuthForm }) => {
   const {
@@ -18,27 +19,70 @@ const AuthForm = ({ setOpenAuthForm }) => {
   const onSignupSubmit = async (data) => {
     const { fullname, signupEmail, signupPassword } = data;
 
-    dispatch(
-      loginUser({
-        fullname,
-        email: signupEmail,
-        cartItems: [],
-      })
-    );
+    try {
+      const result = await axios.post(
+        import.meta.env.VITE_BACKEND_BASE_URL + "/signup",
+        {
+          fullname,
+          email: signupEmail,
+          password: signupPassword,
+        },
+        {
+          withCredentials: true,
+        }
+      );
 
-    setOpenAuthForm(false);
-    reset();
-    toast.success("Signup successful");
+      dispatch(
+        loginUser({
+          fullname: result.data.user.fullname,
+          email: result.data.user.email,
+          cartItems: [],
+        })
+      );
+
+      setOpenAuthForm(false);
+      reset();
+      toast.success("Signup successful");
+    } catch (error) {
+      console.log(error);
+      setOpenAuthForm(false);
+      reset();
+      toast.error(error?.response?.data?.message);
+    }
   };
 
   const onLoginSubmit = async (data) => {
     const { loginEmail, loginPassword } = data;
 
-    dispatch(loginUser({ email: loginEmail, cartItems: [] }));
+    try {
+      const result = await axios.post(
+        import.meta.env.VITE_BACKEND_BASE_URL + "/login",
+        {
+          email: loginEmail,
+          password: loginPassword,
+        },
+        {
+          withCredentials: true,
+        }
+      );
 
-    setOpenAuthForm(false);
-    reset();
-    toast.success("Login successful");
+      dispatch(
+        loginUser({
+          fullname: result.data.user.fullname,
+          email: result.data.user.email,
+          cartItems: [],
+        })
+      );
+
+      setOpenAuthForm(false);
+      reset();
+      toast.success("Login successful");
+    } catch (error) {
+      console.log(error);
+      setOpenAuthForm(false);
+      reset();
+      toast.error(error?.response?.data?.message);
+    }
   };
   return (
     <div className="size-full">
