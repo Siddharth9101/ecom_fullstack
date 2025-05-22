@@ -8,7 +8,7 @@ const Footer = () => {
       <div className="grid grid-cols-2 px-8 py-3">
         {/* left side */}
         <div className="flex flex-col gap-10 justify-center items-center">
-          <span className="text-6xl font-bold cursor-pointer">ecom</span>
+          <span className="text-6xl font-bold cursor-pointer">ekart</span>
           <p className="text-center w-[75%] hidden md:block">
             Lorem, ipsum dolor sit amet consectetur adipisicing elit. Fuga
             reiciendis placeat inventore quos ducimus id?

@@ -124,7 +124,7 @@ const Topbar = ({ isLoggedIn }) => {
     <div className="flex items-center justify-between py-2 px-8 bg-white">
       {/* logo/brand */}
       <div>
-        <span className="text-4xl font-bold">ecom</span>
+        <span className="text-4xl font-bold">ekart</span>
       </div>
 
       {/* right side desktop */}
@@ -205,7 +205,7 @@ const Topbar = ({ isLoggedIn }) => {
         >
           {/* close button */}
           <div className="flex justify-between items-center mb-6 ml-6">
-            <span className="text-4xl font-semibold">ecom</span>
+            <span className="text-4xl font-semibold">ekart</span>
             <button onClick={() => setOpenSidebar(false)}>
               <IoMdClose className="size-6" />
             </button>
