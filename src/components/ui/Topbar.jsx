@@ -13,6 +13,8 @@ import { useDebounce } from "react-haiku";
 import { fetchProducts, searchProducts } from "../../store/productsSlice";
 import { useRazorpay } from "react-razorpay";
 import axios from "axios";
+import { CiMemoPad } from "react-icons/ci";
+import Orders from "../Orders";
 
 const Topbar = ({ isLoggedIn }) => {
   const [openSidebar, setOpenSidebar] = useState(false);
@@ -22,10 +24,11 @@ const Topbar = ({ isLoggedIn }) => {
   const cartItems = useSelector((state) => state.cart.cartItems);
   const [searchTerm, setSearchTerm] = useState("");
   const debouncedValue = useDebounce(searchTerm, 1000);
+  const [openOrdersSidebar, setOpenOrdersSidebar] = useState(false);
 
   const { error, isLoading, Razorpay } = useRazorpay();
 
-  const handlePayment = ({ amount, orderId, Items }) => {
+  const handlePayment = ({ amount, orderId, Items, itemIds }) => {
     const itemNames = Items.join(", ");
     const options = {
       key: import.meta.env.VITE_RAZORPAY_ID,
@@ -35,8 +38,31 @@ const Topbar = ({ isLoggedIn }) => {
       description: `Payment for ${itemNames}`,
       order_id: orderId,
       handler: (response) => {
-        console.log(response);
-        toast.success("Payment Successful!");
+        // save order info to backend
+        try {
+          axios
+            .post(
+              `${import.meta.env.VITE_BACKEND_BASE_URL}/orders/add-order`,
+              {
+                totalAmount: amount,
+                razorpayOrderId: response.razorpay_order_id,
+                razorpayPaymentId: response.razorpay_payment_id,
+                razorpaySignature: response.razorpay_signature,
+                products: itemIds,
+              },
+              {
+                withCredentials: true,
+              }
+            )
+            .then(() => {
+              dispatch(emptyCart());
+              window.location.reload();
+              toast.success("Payment Successful!");
+            });
+        } catch (error) {
+          console.log(error);
+          toast.error("Payment Failed!");
+        }
       },
       prefill: {
         name: "Siddharth",
@@ -60,15 +86,21 @@ const Topbar = ({ isLoggedIn }) => {
     try {
       let Items = [];
       cartItems.map((item) => Items.push(item.title));
+      let itemIds = [];
+      cartItems.map((item) => itemIds.push(item._id));
       const result = await axios.post(
-        `${import.meta.env.VITE_BACKEND_BASE_URL}/create-order`,
+        `${import.meta.env.VITE_BACKEND_BASE_URL}/orders/create-order`,
         {
           amount,
+        },
+        {
+          withCredentials: true,
         }
       );
       const { data } = result;
-      handlePayment({ amount, orderId: data.id, Items });
+      handlePayment({ amount, orderId: data.id, Items, itemIds });
       if (!isLoading) dispatch(emptyCart());
+      console.log(Items, itemIds);
     } catch (error) {
       console.log(error);
       toast.error("Payment Failed!");
@@ -76,7 +108,7 @@ const Topbar = ({ isLoggedIn }) => {
   };
 
   useEffect(() => {
-    if (openSidebar || openAuthForm || openCartSidebar) {
+    if (openSidebar || openAuthForm || openCartSidebar || openOrdersSidebar) {
       document.body.style.overflow = "hidden";
     } else {
       document.body.style.overflow = "auto";
@@ -85,23 +117,21 @@ const Topbar = ({ isLoggedIn }) => {
     return () => {
       document.body.style.overflow = "auto";
     };
-  }, [openSidebar, openAuthForm, openCartSidebar]);
+  }, [openSidebar, openAuthForm, openCartSidebar, openOrdersSidebar]);
 
   useEffect(() => {
     if (debouncedValue === "") {
       dispatch(fetchProducts());
+    } else {
+      dispatch(searchProducts(debouncedValue));
     }
-    dispatch(searchProducts(debouncedValue));
   }, [debouncedValue]);
 
   const logoutHandler = async () => {
     try {
-      const result = await axios.get(
-        `${import.meta.env.VITE_BACKEND_BASE_URL}/logout`,
-        {
-          withCredentials: true,
-        }
-      );
+      await axios.get(`${import.meta.env.VITE_BACKEND_BASE_URL}/auth/logout`, {
+        withCredentials: true,
+      });
       dispatch(logoutUser());
       dispatch(emptyCart());
       setOpenSidebar(false);
@@ -147,11 +177,19 @@ const Topbar = ({ isLoggedIn }) => {
             >
               <CiShoppingCart className="size-6" />
               {/* cart badge */}
-              {cartItems.length > 0 && (
+              {cartItems?.length > 0 && (
                 <div className=" absolute top-1 right-1 size-4 rounded-full bg-black text-white text-sm font-semibold flex items-center justify-center">
-                  {cartItems.length}
+                  {cartItems?.length}
                 </div>
               )}
+            </div>
+
+            {/* my orders */}
+            <div
+              className="rounded-full hover:bg-gray-100 p-2 cursor-pointer relative"
+              onClick={() => setOpenOrdersSidebar(true)}
+            >
+              <CiMemoPad className="size-6" />
             </div>
 
             {/* logout button */}
@@ -225,12 +263,26 @@ const Topbar = ({ isLoggedIn }) => {
                     className="flex justify-center gap-3 items-center cursor-pointer py-1 px-3 bg-black text-white rounded hover:bg-black/85"
                     onClick={() => {
                       setOpenSidebar(false);
-                      setOpenCartSidebar(true);
+                      setOpenOrdersSidebar(true);
                     }}
                   >
-                    Your Cart
+                    My Cart
                     <div>
                       <CiShoppingCart className="size-6" />
+                    </div>
+                  </div>
+
+                  {/* my orders button */}
+                  <div
+                    className="flex justify-center gap-3 items-center cursor-pointer py-1 px-3 bg-black text-white rounded hover:bg-black/85"
+                    onClick={() => {
+                      setOpenSidebar(false);
+                      setOpenOrdersSidebar(true);
+                    }}
+                  >
+                    My Orders
+                    <div>
+                      <CiMemoPad className="size-6" />
                     </div>
                   </div>
 
@@ -327,8 +379,8 @@ const Topbar = ({ isLoggedIn }) => {
           <div className="flex flex-col gap-4">
             {/* cart items */}
             {cartItems.length > 0 ? (
-              cartItems.map((item, idx) => (
-                <React.Fragment key={idx}>
+              cartItems.map((item) => (
+                <React.Fragment key={item._id}>
                   <CartItem product={item} />
                 </React.Fragment>
               ))
@@ -359,6 +411,36 @@ const Topbar = ({ isLoggedIn }) => {
             >
               Proceed to Checkout
             </button>
+          </div>
+        </div>
+      </div>
+
+      {/* Orders Sidebar */}
+      <div
+        className={`fixed top-0 right-0 h-full flex justify-end transition-all duration-300 ease-in-out overflow-hidden bg-black/60 z-50 ${
+          openOrdersSidebar
+            ? "w-full opacity-100 pointer-events-auto"
+            : "w-0 opacity-0 pointer-events-none"
+        }`}
+        onClick={() => setOpenOrdersSidebar(false)}
+      >
+        <div
+          className="md:w-[35%] w-[85%] h-full bg-white pt-14 px-10 overflow-scroll"
+          onClick={(e) => e.stopPropagation()}
+        >
+          {/* top portion */}
+          <div className="flex justify-between mb-6">
+            <span className="font-semibold">Orders</span>
+            <div
+              className="cursor-pointer"
+              onClick={() => setOpenOrdersSidebar(false)}
+            >
+              <IoMdClose className="size-6" />
+            </div>
+          </div>
+
+          <div>
+            <Orders />
           </div>
         </div>
       </div>

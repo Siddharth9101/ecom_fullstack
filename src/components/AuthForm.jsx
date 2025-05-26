@@ -5,6 +5,7 @@ import { loginUser } from "../store/authSlice";
 import { useForm } from "react-hook-form";
 import { toast } from "react-hot-toast";
 import axios from "axios";
+import Spinner from "./ui/Spinner";
 
 const AuthForm = ({ setOpenAuthForm }) => {
   const {
@@ -14,14 +15,16 @@ const AuthForm = ({ setOpenAuthForm }) => {
     formState: { errors },
   } = useForm();
   const [login, setLogin] = useState(true);
+  const [loading, setLoading] = useState(false);
 
   const dispatch = useDispatch();
   const onSignupSubmit = async (data) => {
     const { fullname, signupEmail, signupPassword } = data;
+    setLoading(true);
 
     try {
       const result = await axios.post(
-        import.meta.env.VITE_BACKEND_BASE_URL + "/signup",
+        import.meta.env.VITE_BACKEND_BASE_URL + "/auth/signup",
         {
           fullname,
           email: signupEmail,
@@ -34,9 +37,7 @@ const AuthForm = ({ setOpenAuthForm }) => {
 
       dispatch(
         loginUser({
-          fullname: result.data.user.fullname,
-          email: result.data.user.email,
-          cartItems: [],
+          user: result.data.user,
         })
       );
 
@@ -47,16 +48,19 @@ const AuthForm = ({ setOpenAuthForm }) => {
       console.log(error);
       setOpenAuthForm(false);
       reset();
-      toast.error(error?.response?.data?.message);
+      toast.error(error?.response?.data?.message || "Something went wrong!");
+    } finally {
+      setLoading(false);
     }
   };
 
   const onLoginSubmit = async (data) => {
     const { loginEmail, loginPassword } = data;
+    setLoading(true);
 
     try {
       const result = await axios.post(
-        import.meta.env.VITE_BACKEND_BASE_URL + "/login",
+        `${import.meta.env.VITE_BACKEND_BASE_URL}/auth/login`,
         {
           email: loginEmail,
           password: loginPassword,
@@ -68,9 +72,7 @@ const AuthForm = ({ setOpenAuthForm }) => {
 
       dispatch(
         loginUser({
-          fullname: result.data.user.fullname,
-          email: result.data.user.email,
-          cartItems: [],
+          user: result.data.user,
         })
       );
 
@@ -81,7 +83,9 @@ const AuthForm = ({ setOpenAuthForm }) => {
       console.log(error);
       setOpenAuthForm(false);
       reset();
-      toast.error(error?.response?.data?.message);
+      toast.error(error?.response?.data?.message || "Something went wrong!");
+    } finally {
+      setLoading(false);
     }
   };
   return (
@@ -120,6 +124,7 @@ const AuthForm = ({ setOpenAuthForm }) => {
                   id="loginEmail"
                   name="loginEmail"
                   placeholder="example@gmail.com"
+                  autoComplete="off"
                   className="p-3 text-gray-800 text-sm border border-gray-600 tracking-wide outline-none"
                   {...register("loginEmail", { required: true })}
                 />
@@ -143,6 +148,7 @@ const AuthForm = ({ setOpenAuthForm }) => {
                   id="loginPassword"
                   name="loginPassword"
                   placeholder="********"
+                  autoComplete="off"
                   className="p-3 text-gray-800 text-sm border border-gray-600 tracking-wide outline-none"
                   {...register("loginPassword", { required: true })}
                 />
@@ -152,7 +158,12 @@ const AuthForm = ({ setOpenAuthForm }) => {
                   </span>
                 )}
               </div>
-              <Button label="Login" type="submit" accent="black" />
+              <Button
+                label="Login"
+                type="submit"
+                accent="black"
+                loading={loading}
+              />
             </form>
             <span className="block w-full text-sm font-semibold text-center mb-4">
               or
@@ -166,6 +177,7 @@ const AuthForm = ({ setOpenAuthForm }) => {
                 e.stopPropagation();
                 setLogin(false);
               }}
+              loading={false}
             />
           </div>
         </>
@@ -200,6 +212,7 @@ const AuthForm = ({ setOpenAuthForm }) => {
                 id="fullname"
                 name="fullname"
                 placeholder="John Doe"
+                autoComplete="off"
                 className="p-3 text-gray-800 text-sm border border-gray-600 tracking-wide outline-none"
                 {...register("fullname", { required: true })}
               />
@@ -223,6 +236,7 @@ const AuthForm = ({ setOpenAuthForm }) => {
                 id="signupEmail"
                 name="signupEmail"
                 placeholder="example2gmail.com"
+                autoComplete="off"
                 className="p-3 text-gray-800 text-sm border border-gray-600 tracking-wide outline-none"
                 {...register("signupEmail", { required: true })}
               />
@@ -246,6 +260,7 @@ const AuthForm = ({ setOpenAuthForm }) => {
                 id="signupPassword"
                 name="signupPassword"
                 placeholder="********"
+                autoComplete="off"
                 className="p-3 text-gray-800 text-sm border border-gray-600 tracking-wide outline-none"
                 {...register("signupPassword", { required: true })}
               />
@@ -255,7 +270,12 @@ const AuthForm = ({ setOpenAuthForm }) => {
                 </span>
               )}
             </div>
-            <Button label="Register" type="submit" accent="black" />
+            <Button
+              label="Register"
+              type="submit"
+              accent="black"
+              loading={loading}
+            />
           </form>
           <span className="block w-full text-sm font-semibold text-center mb-4">
             or
@@ -269,6 +289,7 @@ const AuthForm = ({ setOpenAuthForm }) => {
               e.stopPropagation();
               setLogin(true);
             }}
+            loading={false}
           />
         </>
       )}
@@ -278,7 +299,7 @@ const AuthForm = ({ setOpenAuthForm }) => {
 
 export default AuthForm;
 
-const Button = ({ label, type, accent, handler }) => {
+const Button = ({ label, type, accent, handler, loading }) => {
   return (
     <button
       onClick={(e) => {
@@ -291,7 +312,7 @@ const Button = ({ label, type, accent, handler }) => {
           : "text-black/95 hover:bg-black/95 hover:text-white/95"
       }`}
     >
-      {label}
+      {loading ? <Spinner /> : label}
     </button>
   );
 };

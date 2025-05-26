@@ -39,6 +39,14 @@ const cartSlice = createSlice({
     },
     emptyCart: (state) => {
       state.cartItems = [];
+      const user = JSON.parse(localStorage.getItem("user"));
+      localStorage.setItem(
+        "user",
+        JSON.stringify({
+          ...user,
+          cartItems: state.cartItems,
+        })
+      );
     },
   },
 });

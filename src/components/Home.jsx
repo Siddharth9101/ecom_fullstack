@@ -61,7 +61,9 @@ const Home = () => {
       {
         <section className="grid md:grid-cols-4 md:gap-8 md:p-8 gap-4 p-4">
           {allProducts.length > 0 ? (
-            allProducts.map((item) => <ProductCard key={item.id} item={item} />)
+            allProducts.map((item) => (
+              <ProductCard key={item._id} item={item} />
+            ))
           ) : (
             <div className="text-4xl h-56 w-full flex justify-center items-center col-span-4">
               No Products Found
@@ -90,7 +92,9 @@ const Home = () => {
       {
         <section className="grid md:grid-cols-4 md:gap-8 md:p-8 gap-4 p-4">
           {allProducts.length > 0 ? (
-            allProducts.map((item) => <ProductCard key={item.id} item={item} />)
+            allProducts.map((item) => (
+              <ProductCard key={item._id} item={item} />
+            ))
           ) : (
             <div className="text-4xl h-56 w-full flex justify-center items-center col-span-4">
               No products found

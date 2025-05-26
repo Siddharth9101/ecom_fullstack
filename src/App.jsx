@@ -1,8 +1,10 @@
-import { lazy } from "react";
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
-const Home = lazy(() => import("./components/Home"));
-const Products = lazy(() => import("./components/Products"));
-const UserLayout = lazy(() => import("./components/layouts/UserLayout"));
+import Home from "./components/Home";
+import Products from "./components/Products";
+import UserLayout from "./components/layouts/UserLayout";
+import AdminLayout from "./components/layouts/AdminLayout";
+import AdminProducts from "./components/AdminProducts";
+import AdminDashboard from "./components/AdminDashboard";
 
 const App = () => {
   return (
@@ -36,6 +38,11 @@ const App = () => {
                 path="kids"
                 element={<Products pageLabel={"Kid's Wear"} />}
               />
+              {/* Admin Routes */}
+              <Route path="admin" element={<AdminLayout />}>
+                <Route path="dashboard" element={<AdminDashboard />} />
+                <Route index element={<div />} />
+              </Route>
             </Route>
           </Routes>
         </section>

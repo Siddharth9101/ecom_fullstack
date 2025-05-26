@@ -43,16 +43,13 @@ const Products = ({ pageLabel }) => {
         <FiltersSidebar />
       </div>
       {/* right side */}
-      <div className="col-span-12 md:col-span-9">
+      <div className="col-span-12 mx-6 md:col-span-9">
         <div
           className="w-full flex gap-1 my-3 pl-3 cursor-pointer md:hidden"
           onClick={() => setOpen(true)}
         >
           <FaFilter className="size-6" />
           <span className="text-sm">Filters</span>
-        </div>
-        <div>
-          <img src={"/products-banner.webp"} alt="banner" loading="lazy" />
         </div>
         <h1 className="text-4xl font-semibold italic tracking-wider my-6 px-6 md:px-0">
           {pageLabel}
@@ -67,9 +64,9 @@ const Products = ({ pageLabel }) => {
                     (item) =>
                       item.category.toLowerCase() === pageLabel.toLowerCase()
                   )
-                  .map((item) => <ProductCard key={item.id} item={item} />)
+                  .map((item) => <ProductCard key={item._id} item={item} />)
               : products.map((item) => (
-                  <ProductCard key={item.id} item={item} />
+                  <ProductCard key={item._id} item={item} />
                 ))}
           </div>
         }
