@@ -7,7 +7,7 @@ const Orders = () => {
   const [loading, setLoading] = useState(true);
   const [orders, setOrders] = useState([]);
   const [error, setError] = useState("");
-  const user = useSelector((state) => state.auth.user);
+  const isLoggedIn = useSelector((state) => state.auth.isLoggedIn);
   useEffect(() => {
     const fetchOrders = async () => {
       setLoading(true);
@@ -22,13 +22,13 @@ const Orders = () => {
         setOrders(result.data);
       } catch (error) {
         console.log(error);
-        setError(error?.response?.data?.message || "Something went wrong!");
+        setError("Something went wrong!");
       } finally {
         setLoading(false);
       }
     };
-    fetchOrders();
-  }, [user]);
+    if (isLoggedIn) fetchOrders();
+  }, [isLoggedIn]);
 
   if (loading)
     return (
@@ -85,7 +85,7 @@ const Orders = () => {
           ))
         ) : (
           <div className="w-full flex justify-center items-center">
-            No react orders
+            No recent orders
           </div>
         )}
       </div>
