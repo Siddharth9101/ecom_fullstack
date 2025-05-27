@@ -60,7 +60,8 @@ const AdminProducts = () => {
           className="py-2 px-4 font-semibold bg-red-500 hover:bg-red-400 cursor-pointer text-white rounded-full"
           onClick={() => {
             localStorage.removeItem("adminToken");
-            navigate("/admin", { replace: true });
+            navigate("/", { replace: true });
+            window.location.reload();
             toast.success("Logout successful!");
           }}
         >

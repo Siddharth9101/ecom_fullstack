@@ -1,7 +1,6 @@
 import axios from "axios";
 import React, { useEffect, useState } from "react";
 import Spinner from "./ui/Spinner";
-import { set } from "react-hook-form";
 import toast from "react-hot-toast";
 
 const AdminOrders = () => {
@@ -22,8 +21,8 @@ const AdminOrders = () => {
             },
           }
         );
-
-        setOrders(result.data);
+        console.log(result.data.orders);
+        setOrders(result.data.orders);
       } catch (error) {
         console.log(error);
         setError(error?.response?.data?.message || "Something went wrong!");
@@ -68,6 +67,13 @@ const AdminOrders = () => {
     return (
       <div className="w-full flex justify-center items-center">{error}</div>
     );
+
+  if (orders.length === 0)
+    return (
+      <div className="w-full flex justify-center items-center">
+        No orders found!
+      </div>
+    );
   return (
     <div className="md:px-26 px-8">
       <div>
@@ -78,24 +84,26 @@ const AdminOrders = () => {
           >
             <h2 className="font-semibold mb-2">Order ID: {order._id}</h2>
             <div className="flex flex-col gap-6">
-              {order.products.map((product) => (
-                <div key={product._id} className=" flex gap-3">
-                  <img
-                    src={product.image}
-                    alt={product.title}
-                    className="w-14 object-cover"
-                  />
-                  <div>
-                    <p className="text-sm mt-1 font-semibold">
-                      {product.title}
-                    </p>
-                    <p className="text-sm font-semibold">
-                      Price:{" "}
-                      <span className="font-normal">₹{product.price}</span>
-                    </p>
+              {!loading &&
+                orders.length > 0 &&
+                order.products?.map((product) => (
+                  <div key={product._id} className=" flex gap-3">
+                    <img
+                      src={product.image}
+                      alt={product.title}
+                      className="w-14 object-cover"
+                    />
+                    <div>
+                      <p className="text-sm mt-1 font-semibold">
+                        {product.title}
+                      </p>
+                      <p className="text-sm font-semibold">
+                        Price:{" "}
+                        <span className="font-normal">₹{product.price}</span>
+                      </p>
+                    </div>
                   </div>
-                </div>
-              ))}
+                ))}
             </div>
             <p className="mt-2 font-semibold">
               Total Amount:{" "}

@@ -153,7 +153,9 @@ const Topbar = ({ isLoggedIn }) => {
     <div className="flex items-center justify-between py-2 px-8 bg-white">
       {/* logo/brand */}
       <div>
-        <span className="text-4xl font-bold">ekart</span>
+        <span>
+          <img src="/ekart_logo.png" alt="logo" className="h-16" />
+        </span>
       </div>
 
       {/* right side desktop */}
@@ -241,8 +243,10 @@ const Topbar = ({ isLoggedIn }) => {
           onClick={(e) => e.stopPropagation()}
         >
           {/* close button */}
-          <div className="flex justify-between items-center mb-6 ml-6">
-            <span className="text-4xl font-semibold">ekart</span>
+          <div className="flex justify-between items-center mb-6 mr-3">
+            <span className="text-4xl font-semibold">
+              <img src="/ekart_logo.png" alt="logo" className="h-16" />
+            </span>
             <button onClick={() => setOpenSidebar(false)}>
               <IoMdClose className="size-6" />
             </button>
@@ -262,7 +266,7 @@ const Topbar = ({ isLoggedIn }) => {
                     className="flex justify-center gap-3 items-center cursor-pointer py-1 px-3 bg-black text-white rounded hover:bg-black/85"
                     onClick={() => {
                       setOpenSidebar(false);
-                      setOpenOrdersSidebar(true);
+                      setOpenCartSidebar(true);
                     }}
                   >
                     My Cart
