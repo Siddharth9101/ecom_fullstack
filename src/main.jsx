@@ -7,10 +7,8 @@ import store from "./store/store.jsx";
 import { Toaster } from "react-hot-toast";
 
 createRoot(document.getElementById("root")).render(
-  <StrictMode>
-    <Provider store={store}>
-      <Toaster position="top-right" reverseOrder={false} />
-      <App />
-    </Provider>
-  </StrictMode>
+  <Provider store={store}>
+    <Toaster position="top-right" reverseOrder={false} />
+    <App />
+  </Provider>
 );

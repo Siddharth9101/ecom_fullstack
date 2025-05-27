@@ -26,7 +26,7 @@ const CartItem = ({ product }) => {
             className="bg-red-500 text-white w-full text-sm tracking-wide rounded py-2 font-semibold hover:bg-red-400 cursor-pointer"
             onClick={(e) => {
               e.stopPropagation();
-              dispatch(removeFromCart(product.id));
+              dispatch(removeFromCart(product._id));
             }}
           >
             Remove
