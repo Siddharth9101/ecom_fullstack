@@ -25,6 +25,7 @@ export const authSlice = createSlice({
       state.isLoggedIn = false;
       state.user = null;
       localStorage.removeItem("user");
+      localStorage.removeItem("cartItems");
     },
   },
 });

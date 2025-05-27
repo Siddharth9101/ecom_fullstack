@@ -48,7 +48,7 @@ const AdminProducts = () => {
     return <Error />;
   }
   return (
-    <div className="max-w-[80%] px-6 mx-auto py-3">
+    <div className="max-w-[80%] mx-auto py-3">
       <div className="w-full flex justify-between">
         <button
           className="py-2 px-4 font-semibold bg-red-500 hover:bg-red-400 cursor-pointer text-white rounded-full"
@@ -60,14 +60,15 @@ const AdminProducts = () => {
           className="py-2 px-4 font-semibold bg-red-500 hover:bg-red-400 cursor-pointer text-white rounded-full"
           onClick={() => {
             localStorage.removeItem("adminToken");
-            navigate("/admin");
+            navigate("/admin", { replace: true });
+            toast.success("Logout successful!");
           }}
         >
           Logout
         </button>
       </div>
 
-      <div className="grid grid-cols-2 md:grid-cols-4 mt-6">
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-2 mt-6">
         {Array.isArray(allProducts) && allProducts.length > 0 ? (
           allProducts.map((item) => (
             <div
