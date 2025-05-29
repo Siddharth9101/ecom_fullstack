@@ -49,15 +49,15 @@ const AdminProducts = () => {
   }
   return (
     <div className="max-w-[80%] mx-auto py-3">
-      <div className="w-full flex justify-between">
+      <div className="w-full flex justify-between px-6">
         <button
-          className="py-2 px-4 font-semibold bg-red-500 hover:bg-red-400 cursor-pointer text-white rounded-full"
+          className="py-2 px-4 font-semibold bg-green-500 hover:bg-green-400 cursor-pointer text-white rounded-lg"
           onClick={() => setOpenModel(true)}
         >
           Add Product +
         </button>
         <button
-          className="py-2 px-4 font-semibold bg-red-500 hover:bg-red-400 cursor-pointer text-white rounded-full"
+          className="py-2 px-4 font-semibold bg-red-500 hover:bg-red-400 cursor-pointer text-white rounded-lg"
           onClick={() => {
             localStorage.removeItem("adminToken");
             navigate("/", { replace: true });

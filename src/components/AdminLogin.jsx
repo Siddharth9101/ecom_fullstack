@@ -40,8 +40,8 @@ const AdminLogin = () => {
     }
   };
   return (
-    <div className="h-screen w-full flex justify-center items-center">
-      <div className="border p-2 rounded flex flex-col items-center">
+    <div className="h-screen w-full flex justify-center items-center bg-gray-100">
+      <div className="border border-gray-300 shadow-lg p-4 rounded flex flex-col items-center">
         <h1 className="text-3xl font-semibold">Admin Panel</h1>
         <form onSubmit={handleSubmit(onSubmit)}>
           <div className="space-x-2">
@@ -54,7 +54,7 @@ const AdminLogin = () => {
               id="email"
               placeholder="Enter Email"
               autoComplete="off"
-              className="border rounded p-1 outline-none w-full"
+              className="border border-gray-400 rounded p-1 outline-none w-full"
               {...register("email", { required: true })}
             />
             <br />
@@ -75,7 +75,7 @@ const AdminLogin = () => {
               id="password"
               placeholder="********"
               autoComplete="off"
-              className="border rounded p-1 outline-none w-full"
+              className="border border-gray-400 rounded p-1 outline-none w-full"
               {...register("password", { required: true })}
             />
             <br />

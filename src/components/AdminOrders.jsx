@@ -83,7 +83,7 @@ const AdminOrders = () => {
             className="border border-gray-400 shadow-lg p-4 mb-4"
           >
             <h2 className="font-semibold mb-2">Order ID: {order._id}</h2>
-            <div className="flex flex-col gap-6">
+            <div className="grid grid-cols-none md:grid-cols-2 gap-6">
               {!loading &&
                 orders.length > 0 &&
                 order.products?.map((product) => (
