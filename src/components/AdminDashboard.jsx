@@ -35,8 +35,11 @@ const AdminDashboard = () => {
   }, [navigate]);
   return (
     <div>
-      <header className="w-full py-2 px-6 flex justify-center items-center">
-        <nav className="my-2 flex justify-center items-center p-2 rounded-full text-white min-w-[80%] bg-red-500">
+      <header className="relative w-full flex justify-center items-center shadow-lg">
+        <div className="absolute md:top-1 top-2 md:left-8 left-3">
+          <img src="/ekart_logo.png" alt="logo" className="md:w-24 w-16" />
+        </div>
+        <nav className="flex justify-center items-center px-2 py-3 min-w-[80%]">
           <ul className="flex gap-6">
             {["Users", "Products", "Orders"].map((item, idx) => {
               return (

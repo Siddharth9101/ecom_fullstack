@@ -104,41 +104,47 @@ const AdminUsers = () => {
         {users?.map((user) => (
           <div
             key={user._id}
-            className="border border-gray-400 shadow-lg p-4 mb-4"
+            className="relative mt-6 border border-gray-400 shadow-lg p-4 mb-4 md:flex md:gap-3"
           >
-            <div className="flex justify-end items-end mb-3">
+            <div className="absolute top-3 right-3 flex justify-end items-end mb-3">
               <MdDelete
-                className="hover:scale-115 transition-all duration-300 ease-in-out cursor-pointer "
+                className="hover:scale-115 transition-all duration-300 ease-in-out cursor-pointer size-6"
                 onClick={() => deleteUser(user._id)}
               />
             </div>
-            <div className="space-y-5 md:space-y-0 md:flex md:justify-between md:items-center">
-              <div className="font-semibold">
-                Full Name: <span className="font-normal">{user?.fullname}</span>
-              </div>
+            <div>
+              <img src="/user-img.png" alt="placeholder" className="size-24" />
+            </div>
+            <div className="space-y-5 flex md:flex-row flex-col ">
+              <div className="flex flex-col gap-3">
+                <div className="font-semibold">
+                  Full Name:{" "}
+                  <span className="font-normal">{user?.fullname}</span>
+                </div>
 
-              <div className="font-semibold">
-                Email: <span className="font-normal">{user?.email}</span>
-              </div>
+                <div className="font-semibold">
+                  Email: <span className="font-normal">{user?.email}</span>
+                </div>
 
-              <div className="font-semibold">
-                Is Admin:{" "}
-                <select
-                  name="orderStatus"
-                  id="orderStatus"
-                  className="outline-none border border-gray-400 rounded"
-                  onChange={(e) => {
-                    onStatusChange(user._id, e.target.value);
-                  }}
-                  disabled={updatingStatus}
-                >
-                  <option value={user.isAdmin}>
-                    {user.isAdmin ? "Yes" : "No"}
-                  </option>
-                  <option value={user.isAdmin ? false : true}>
-                    {user.isAdmin ? "No" : "Yes"}
-                  </option>
-                </select>
+                <div className="font-semibold">
+                  Is Admin:{" "}
+                  <select
+                    name="orderStatus"
+                    id="orderStatus"
+                    className="outline-none border border-gray-400 rounded"
+                    onChange={(e) => {
+                      onStatusChange(user._id, e.target.value);
+                    }}
+                    disabled={updatingStatus}
+                  >
+                    <option value={user.isAdmin}>
+                      {user.isAdmin ? "Yes" : "No"}
+                    </option>
+                    <option value={user.isAdmin ? false : true}>
+                      {user.isAdmin ? "No" : "Yes"}
+                    </option>
+                  </select>
+                </div>
               </div>
             </div>
           </div>

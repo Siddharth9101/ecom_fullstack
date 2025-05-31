@@ -79,16 +79,21 @@ const AdminOrders = () => {
         {orders?.map((order) => (
           <div
             key={order._id}
-            className="border border-gray-400 shadow-lg p-4 mb-4"
+            className="border border-gray-400 shadow-lg p-4 mb-4 mt-6"
           >
-            <div className="md:flex md:justify-between">
-              <div className="font-semibold">
-                Customer Name: {order?.userId?.fullname}
+            <div className="flex gap-3 mb-3">
+              <div className="flex items-center justify-center">
+                <img src="/order-box.png" alt="order box" className="size-24" />
               </div>
-              <div className="font-semibold">
-                Ordered on: {order.createdAt.split("T")[0]}
+              <div className="flex flex-col gap-3">
+                <div className="font-semibold">
+                  Customer Name: {order?.userId?.fullname}
+                </div>
+                <div className="font-semibold">
+                  Ordered on: {order.createdAt.split("T")[0]}
+                </div>
+                <h2 className="font-semibold mb-2">Order ID: {order._id}</h2>
               </div>
-              <h2 className="font-semibold mb-2">Order ID: {order._id}</h2>
             </div>
             <div className="grid grid-cols-none md:grid-cols-2 gap-6">
               {!loading &&
@@ -98,7 +103,7 @@ const AdminOrders = () => {
                     <img
                       src={product.image}
                       alt={product.title}
-                      className="w-14 object-cover"
+                      className="size-20 object-cover"
                     />
                     <div>
                       <p className="text-sm mt-1 font-semibold">
