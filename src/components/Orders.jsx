@@ -47,10 +47,12 @@ const Orders = () => {
         {orders?.length > 0 ? (
           orders.map((order) => (
             <div
-              key={order._id}
+              key={order?._id}
               className="border border-gray-400 shadow-lg p-4 mb-4"
             >
-              <h2 className="font-semibold mb-2">Order ID: {order._id}</h2>
+              <h2 className="font-semibold mb-2">
+                Order ID: {`${order?._id.slice(-5)}...`}
+              </h2>
               <div className="flex flex-col gap-6">
                 {order.products.map((product) => (
                   <div key={product._id} className=" flex gap-3">

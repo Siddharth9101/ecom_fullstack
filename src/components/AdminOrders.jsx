@@ -21,7 +21,6 @@ const AdminOrders = () => {
             },
           }
         );
-        console.log(result.data.orders);
         setOrders(result.data.orders);
       } catch (error) {
         console.log(error);
@@ -77,12 +76,20 @@ const AdminOrders = () => {
   return (
     <div className="md:px-26 px-8">
       <div>
-        {orders.map((order) => (
+        {orders?.map((order) => (
           <div
             key={order._id}
             className="border border-gray-400 shadow-lg p-4 mb-4"
           >
-            <h2 className="font-semibold mb-2">Order ID: {order._id}</h2>
+            <div className="md:flex md:justify-between">
+              <div className="font-semibold">
+                Customer Name: {order?.userId?.fullname}
+              </div>
+              <div className="font-semibold">
+                Ordered on: {order.createdAt.split("T")[0]}
+              </div>
+              <h2 className="font-semibold mb-2">Order ID: {order._id}</h2>
+            </div>
             <div className="grid grid-cols-none md:grid-cols-2 gap-6">
               {!loading &&
                 orders.length > 0 &&

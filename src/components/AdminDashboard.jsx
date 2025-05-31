@@ -4,9 +4,10 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import toast from "react-hot-toast";
 import AdminOrders from "./AdminOrders";
+import AdminUsers from "./AdminUsers";
 
 const AdminDashboard = () => {
-  const [selected, setSelected] = useState(0);
+  const [selected, setSelected] = useState(1);
   const navigate = useNavigate();
   useEffect(() => {
     const verifyAdmin = async () => {
@@ -37,7 +38,7 @@ const AdminDashboard = () => {
       <header className="w-full py-2 px-6 flex justify-center items-center">
         <nav className="my-2 flex justify-center items-center p-2 rounded-full text-white min-w-[80%] bg-red-500">
           <ul className="flex gap-6">
-            {["Products", "Orders"].map((item, idx) => {
+            {["Users", "Products", "Orders"].map((item, idx) => {
               return (
                 <li
                   key={idx}
@@ -55,8 +56,9 @@ const AdminDashboard = () => {
         </nav>
       </header>
 
-      <section>{selected === 0 && <AdminProducts />}</section>
-      <section>{selected === 1 && <AdminOrders />}</section>
+      <section>{selected === 0 && <AdminUsers />}</section>
+      <section>{selected === 1 && <AdminProducts />}</section>
+      <section>{selected === 2 && <AdminOrders />}</section>
     </div>
   );
 };

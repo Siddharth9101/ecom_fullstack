@@ -140,15 +140,15 @@ const Topbar = ({ isLoggedIn }) => {
       toast.error(error?.response?.data?.message || "Something went wrong!");
     }
   };
-  if (error)
-    return (
-      <div className="h-screen flex justify-center items-center text-2xl">
-        Error in payment
-        <Link to="/" className="underline">
-          Go back
-        </Link>
-      </div>
-    );
+  // if (error)
+  //   return (
+  //     <div className="h-screen flex justify-center items-center text-2xl">
+  //       Error in payment
+  //       <Link to="/" className="underline">
+  //         Go back
+  //       </Link>
+  //     </div>
+  //   );
   return (
     <div className="flex items-center justify-between py-2 px-8 bg-white">
       {/* logo/brand */}
