@@ -2,6 +2,7 @@ import axios from "axios";
 import React, { useEffect, useState } from "react";
 import Spinner from "./ui/Spinner";
 import toast from "react-hot-toast";
+import { MdDelete } from "react-icons/md";
 
 const AdminUsers = () => {
   const [loading, setLoading] = useState(true);
@@ -54,9 +55,28 @@ const AdminUsers = () => {
       toast.success("Role Updated!");
     } catch (error) {
       console.log(error);
-      toast.error("Failed to update status!");
+      toast.error("Failed to update role!");
     } finally {
       setUpdatingStatus(false);
+    }
+  };
+
+  const deleteUser = async (userId) => {
+    try {
+      await axios.delete(
+        `${import.meta.env.VITE_BACKEND_BASE_URL}/users/${userId}`,
+        {
+          headers: {
+            adminToken: JSON.parse(localStorage.getItem("adminToken")),
+          },
+        }
+      );
+
+      setRefreshUI((p) => !p);
+      toast.success("User Deleted!");
+    } catch (error) {
+      console.log(error);
+      toast.error("Failed to delete status!");
     }
   };
 
@@ -86,6 +106,12 @@ const AdminUsers = () => {
             key={user._id}
             className="border border-gray-400 shadow-lg p-4 mb-4"
           >
+            <div className="flex justify-end items-end mb-3">
+              <MdDelete
+                className="hover:scale-115 transition-all duration-300 ease-in-out cursor-pointer "
+                onClick={() => deleteUser(user._id)}
+              />
+            </div>
             <div className="space-y-5 md:space-y-0 md:flex md:justify-between md:items-center">
               <div className="font-semibold">
                 Full Name: <span className="font-normal">{user?.fullname}</span>
